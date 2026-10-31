@@ -1,0 +1,1265 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UV Defender Twin Serum Protector · Concept</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Inter:wght@300;400;500;600&display=swap">
+<style>
+/* =========================================================
+   Design tokens
+   ========================================================= */
+:root{
+  --ivory:#F6F1EA; --ivory-2:#EFE8DE; --paper:#FBF8F3;
+  --ink:#221D2B; --ink-2:#5D566A; --ink-3:#8E8798;
+  --plum:#3A2560; --violet:#5E49A6; --violet-2:#8C78CC;
+  --gold:#B08D57; --gold-2:#D9BF8C; --line:#DED4C6;
+  --green:#4FA36A;
+  --boost:#EE9A80;                 /* current booster colour, changed by JS */
+  --serif:'Cormorant Garamond', 'Times New Roman', serif;
+  --sans:Inter, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --ease:cubic-bezier(.22,.7,.18,1);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ivory);color:var(--ink);font-family:var(--sans);font-weight:400;-webkit-font-smoothing:antialiased}
+img,svg{display:block;max-width:100%}
+button{font:inherit;color:inherit;cursor:pointer}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+
+/* =========================================================
+   Navigation
+   ========================================================= */
+.nav{position:fixed;inset:0 0 auto 0;z-index:50;display:flex;align-items:center;justify-content:space-between;
+  padding:18px clamp(20px,5vw,64px);background:rgba(246,241,234,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid rgba(222,212,198,.7)}
+.brand{display:flex;align-items:baseline;gap:14px;text-decoration:none}
+.brand b{font-family:var(--sans);font-weight:600;letter-spacing:.32em;font-size:13px;color:var(--ink)}
+.brand span{font-size:11px;letter-spacing:.18em;color:var(--gold);text-transform:uppercase}
+.nav ul{display:flex;gap:30px;list-style:none;margin:0;padding:0}
+.nav ul a{text-decoration:none;font-size:13px;letter-spacing:.06em;color:var(--ink-2);padding:6px 0;border-bottom:1px solid transparent;transition:color .3s,border-color .3s}
+.nav ul a:hover,.nav ul a.active{color:var(--ink);border-color:var(--gold)}
+@media (max-width:760px){.nav{padding:16px 16px}.nav ul{gap:14px}.nav ul a{font-size:12px}.brand span{display:none}.brand b{letter-spacing:.22em;font-size:12px}}
+@media (max-width:480px){.nav ul li:nth-child(1){display:none}}
+
+/* =========================================================
+   Shared layout
+   ========================================================= */
+section{position:relative}
+.wrap{max-width:1320px;margin:0 auto;padding:0 clamp(20px,5vw,64px)}
+.eyebrow{font-size:12px;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);font-weight:500}
+h1,h2,h3{font-family:var(--serif);font-weight:500;letter-spacing:-.01em;margin:0}
+h2{font-size:clamp(40px,5vw,64px);line-height:1.02}
+.lede{font-size:17px;line-height:1.65;color:var(--ink-2);max-width:46ch;font-weight:300}
+.section-head{padding:140px 0 40px}
+.section-head .lede{margin-top:18px}
+
+/* =========================================================
+   HERO
+   ========================================================= */
+.hero{min-height:100vh;display:grid;align-items:center;padding-top:80px;
+  background:radial-gradient(1200px 700px at 72% 45%, #FFFFFF 0%, var(--ivory) 60%)}
+.hero .wrap{display:grid;grid-template-columns:1.05fr 1fr;align-items:center;gap:40px;width:100%}
+.hero h1{font-size:clamp(48px,6.6vw,96px);line-height:.98;margin:18px 0 22px}
+.hero h1 em{color:var(--violet);font-style:italic}
+.hero .lede{font-size:19px}
+.cta{display:inline-flex;align-items:center;gap:12px;margin-top:38px;padding:16px 28px;border-radius:999px;border:1px solid var(--ink);
+  background:var(--ink);color:var(--paper);font-size:14px;letter-spacing:.06em;transition:background .35s var(--ease),color .35s var(--ease)}
+.cta:hover{background:transparent;color:var(--ink)}
+.cta svg{transition:transform .35s var(--ease)}
+.cta:hover svg{transform:translateY(3px)}
+.hero-meta{display:flex;gap:34px;margin-top:56px;padding-top:26px;border-top:1px solid var(--line);max-width:520px}
+.hero-meta div{font-size:12px;color:var(--ink-3);letter-spacing:.04em;line-height:1.5}
+.hero-meta strong{display:block;font-family:var(--serif);font-size:28px;font-weight:500;color:var(--ink);letter-spacing:0}
+.hero-stage{position:relative;height:min(82vh,780px)}
+.hero-stage svg{width:100%;height:100%}
+.float{animation:float 7s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+@media (max-width:900px){.hero .wrap{grid-template-columns:1fr}.hero-stage{height:50vh;order:-1}.hero{padding-top:90px}.hero-meta{gap:18px}}
+
+
+/* =========================================================
+   HERO 3D (pinned, scroll-driven, Three.js)
+   ========================================================= */
+.hero3d{height:260vh;background:radial-gradient(1100px 760px at 66% 46%, #FFFFFF 0%, var(--ivory) 62%)}
+.hero-pin{position:sticky;top:0;height:100vh;overflow:hidden}
+#hero3d{position:absolute;inset:0;width:100%;height:100%;cursor:grab;touch-action:pan-y}
+#hero3d:active{cursor:grabbing}
+.hero-fallback{position:absolute;right:4vw;top:10vh;width:42vw;height:80vh;display:none}
+.no-webgl .hero-fallback{display:block}
+.no-webgl #hero3d,.no-webgl .hero-labels,.no-webgl .hint .drag,.no-webgl #twistBtn,.no-webgl #pressBtn{display:none}
+.hero-copy{position:absolute;left:clamp(20px,6vw,96px);top:50%;transform:translateY(-46%);width:min(620px,46vw);pointer-events:none}
+.hero-copy .phase{transition:opacity .7s var(--ease),transform .7s var(--ease)}
+.hero-copy .phase-b{position:absolute;inset:0 auto auto 0;opacity:0;transform:translateY(24px)}
+.hero-copy.inside .phase-a{opacity:0;transform:translateY(-24px)}
+.hero-copy.inside .phase-b{opacity:1;transform:none}
+.hero-copy h1{font-size:clamp(46px,6vw,92px);line-height:.98;margin:18px 0 22px}
+.hero-copy h1 em{color:var(--violet);font-style:italic}
+.hero-copy .lede{font-size:19px}
+.hero-actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:34px;pointer-events:auto}
+.hero-actions .cta{margin-top:0}
+.ghost{height:52px;padding:0 18px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.6);font-size:13.5px;letter-spacing:.04em;
+  backdrop-filter:blur(6px);transition:border-color .3s,background .3s,transform .3s var(--ease)}
+.ghost:hover{border-color:var(--gold);background:#fff}
+.ghost:active{transform:scale(.97)}
+.ghost.nudge{animation:nudge .45s}
+@keyframes nudge{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.hero-dock{position:absolute;left:clamp(20px,6vw,96px);right:clamp(20px,6vw,96px);bottom:34px;display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
+.swatches{display:flex;align-items:center;gap:10px;padding:10px 16px;border-radius:999px;background:rgba(255,255,255,.66);border:1px solid var(--line);backdrop-filter:blur(8px)}
+.sw-label{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-3);margin-right:4px}
+.sw{width:22px;height:22px;border-radius:50%;border:2px solid #fff;background:var(--c);box-shadow:0 0 0 1px var(--line);transition:transform .3s var(--ease),box-shadow .3s}
+.sw:hover{transform:scale(1.15)}
+.sw[aria-pressed="true"]{box-shadow:0 0 0 1.5px var(--plum);transform:scale(1.12)}
+.sw-name{font-size:13px;color:var(--ink);margin-left:6px;min-width:110px}
+.hint{display:flex;gap:26px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
+.scrollcue b{display:inline-block;width:1px;height:22px;background:var(--gold);margin-left:10px;vertical-align:middle;animation:cue 1.8s ease-in-out infinite;transform-origin:top}
+@keyframes cue{0%{transform:scaleY(0)}50%{transform:scaleY(1)}100%{transform:scaleY(0);transform-origin:bottom}}
+.hero-progress{position:absolute;left:0;right:0;bottom:0;height:2px;background:transparent}
+.hero-progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--violet))}
+.hero-labels{position:absolute;inset:0;pointer-events:none}
+.hl{position:absolute;left:0;top:0;display:flex;align-items:center;gap:10px;opacity:0;transition:opacity .5s var(--ease);will-change:transform}
+.hl i{width:9px;height:9px;border-radius:50%;background:#fff;border:1.5px solid var(--gold);box-shadow:0 0 0 5px rgba(217,191,140,.22)}
+.hl span{position:relative;padding-left:46px;font-size:13px;letter-spacing:.03em;color:var(--ink);white-space:nowrap}
+.hl span::before{content:"";position:absolute;left:0;top:50%;width:38px;height:1px;background:var(--gold-2)}
+.hl.left{flex-direction:row-reverse}
+.hl.left span{padding-left:0;padding-right:46px}
+.hl.left span::before{left:auto;right:0}
+.hl.on{opacity:1}
+@media (max-width:900px){
+  .hero3d{height:230vh}
+  .hero-copy{left:20px;right:20px;width:auto;top:auto;bottom:150px;transform:none}
+  .hero-copy h1{font-size:clamp(38px,10vw,56px);margin:10px 0 12px}
+  .hero-copy .lede{font-size:16px}
+  .hero-actions{margin-top:18px}.hero-actions .cta{padding:13px 20px}.ghost{height:44px;padding:0 16px}
+  .hero-dock{bottom:18px;left:16px;right:16px}
+  .hint{display:none}
+  .hero-fallback{left:10vw;right:10vw;width:auto;top:9vh;height:42vh}
+  .hl span{font-size:11px;padding-left:28px}.hl span::before{width:22px}.hl.left span{padding-right:28px}
+}
+@media (max-width:420px){.sw-label{display:none}.sw-name{min-width:0}}
+@media (max-width:600px){.hero-labels{display:none}.hero-copy{bottom:96px}}
+
+/* =========================================================
+   Stage (the product demo canvas) — shared by all sections
+   ========================================================= */
+.stage{position:relative;width:100%;height:100%;border-radius:28px;
+  background:radial-gradient(70% 60% at 50% 42%, #FFFFFF 0%, #F7F2EB 60%, #EFE7DC 100%);
+  border:1px solid rgba(222,212,198,.8);overflow:hidden}
+.stage svg.scene{position:absolute;inset:0;width:100%;height:100%}
+.chip{position:absolute;left:50%;bottom:28px;transform:translate(-50%,12px);opacity:0;pointer-events:none;
+  display:inline-flex;align-items:center;gap:10px;padding:10px 18px;border-radius:999px;background:var(--paper);
+  border:1px solid var(--line);font-size:13px;letter-spacing:.03em;color:var(--ink);box-shadow:0 10px 30px rgba(58,37,96,.10);
+  transition:opacity .5s var(--ease),transform .5s var(--ease);white-space:nowrap}
+.chip.show{opacity:1;transform:translate(-50%,0)}
+.chip i{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px rgba(79,163,106,.18)}
+.stage-caption{position:absolute;left:24px;top:22px;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-3)}
+
+/* Animated SVG parts. transform-box lets CSS transforms work in SVG user space */
+.part,.nozzle,.ridges,.lvl,.fill,.twist,.ribbon,.hand,.blend,.tagline,.hl-ring{transform-box:fill-box;transition:transform 1s var(--ease),opacity .7s var(--ease),fill .6s var(--ease),filter .5s var(--ease)}
+.nozzle{transform-origin:0% 50%}
+.lvl,.fill{transform-origin:50% 100%}
+.press{transition:transform .28s var(--ease)!important}
+.no-anim, .no-anim *{transition:none!important}
+.ribbon{fill:none;stroke-linecap:round;stroke-dasharray:420;stroke-dashoffset:420;transition:stroke-dashoffset 1.4s var(--ease),opacity .6s}
+.ribbons-on .ribbon{stroke-dashoffset:0}
+.twist{opacity:0}
+.twist.on{opacity:1}
+.twist.on path{animation:dash 1.4s var(--ease) infinite}
+@keyframes dash{from{stroke-dashoffset:60}to{stroke-dashoffset:0}}
+/* component highlight (section 2) */
+.dim .part{opacity:.28}
+.dim .part.hl{opacity:1;filter:drop-shadow(0 0 10px rgba(217,191,140,.9))}
+.dim .chamber{opacity:.25;transition:opacity .5s}
+.dim .chamber.hl{opacity:1}
+.hotspot{cursor:pointer}
+.hotspot text{transition:fill .3s}
+.hotspot:hover text.t{fill:var(--violet)}
+.hotspot.on text.t{fill:var(--violet)}
+.hotspot.on circle{fill:var(--gold)}
+
+/* hand overlay (step 4) */
+.hand-layer{opacity:0;transition:opacity .8s var(--ease)}
+.show-hand .hand-layer{opacity:1}
+.show-hand .bottle-g{opacity:.14}
+.bottle-g{transition:opacity .8s var(--ease)}
+.blend{opacity:0}
+.blending .blend{opacity:1}
+.blending .ribbon-on-hand{opacity:0}
+.ribbon-on-hand{transition:opacity 1.2s var(--ease) .4s}
+.fingertip{opacity:0}
+.blending .fingertip{opacity:1;animation:circle 2.4s ease-in-out infinite}
+@keyframes circle{0%{transform:translate(0,0)}25%{transform:translate(18px,8px)}50%{transform:translate(0,16px)}75%{transform:translate(-18px,8px)}100%{transform:translate(0,0)}}
+
+/* =========================================================
+   MEET THE PRODUCT
+   ========================================================= */
+.meet{padding-bottom:120px}
+.meet-grid{display:grid;grid-template-columns:.85fr 1.15fr;gap:56px;align-items:start}
+.parts-list{list-style:none;margin:28px 0 0;padding:0;border-top:1px solid var(--line)}
+.parts-list li{border-bottom:1px solid var(--line)}
+.parts-list button{width:100%;text-align:left;background:none;border:0;padding:18px 4px;display:flex;align-items:baseline;gap:18px}
+.parts-list .n{font-family:var(--serif);font-size:15px;color:var(--gold);width:22px}
+.parts-list .t{font-size:16px;font-weight:500;transition:color .3s}
+.parts-list button:hover .t,.parts-list button[aria-pressed="true"] .t{color:var(--violet)}
+.parts-list .d{display:grid;grid-template-rows:0fr;transition:grid-template-rows .5s var(--ease)}
+.parts-list .d>div{overflow:hidden;padding-left:44px;font-size:14.5px;line-height:1.6;color:var(--ink-2);font-weight:300}
+.parts-list li.open .d{grid-template-rows:1fr}
+.parts-list li.open .d>div{padding-bottom:20px}
+.meet-stage{height:min(88vh,860px);position:sticky;top:96px}
+@media (max-width:900px){.meet-grid{grid-template-columns:1fr}.meet-stage{position:relative;top:0;height:72vh;order:-1}}
+
+/* =========================================================
+   STEP SECTIONS (How to use, Refill)
+   ========================================================= */
+.steps-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:56px}
+.steps-col{padding-bottom:30vh}
+.step{min-height:78vh;display:flex;flex-direction:column;justify-content:center;padding:40px 0;opacity:.32;transition:opacity .6s var(--ease)}
+.step.active{opacity:1}
+.step .num{font-family:var(--serif);font-size:15px;color:var(--gold);letter-spacing:.1em}
+.step h3{font-size:clamp(32px,3.4vw,46px);line-height:1.05;margin:10px 0 18px}
+.step p{font-size:16.5px;line-height:1.7;color:var(--ink-2);font-weight:300;max-width:44ch;margin:0}
+.step ol{margin:20px 0 0;padding:0;list-style:none;counter-reset:s;max-width:44ch}
+.step ol li{counter-increment:s;position:relative;padding:10px 0 10px 34px;font-size:15px;line-height:1.55;color:var(--ink);border-top:1px solid var(--line)}
+.step ol li::before{content:counter(s);position:absolute;left:0;top:10px;width:22px;height:22px;border-radius:50%;border:1px solid var(--gold);
+  font-size:11px;display:grid;place-items:center;color:var(--gold)}
+.note{margin-top:22px;max-width:44ch;padding:14px 16px;border-left:2px solid var(--gold-2);background:rgba(255,255,255,.5);font-size:13.5px;line-height:1.6;color:var(--ink-2)}
+.note b{color:var(--ink);font-weight:500}
+.stage-col{position:relative}
+.sticky{position:sticky;top:96px;height:calc(100vh - 128px);max-height:860px;display:flex;flex-direction:column;gap:16px}
+.sticky .stage{flex:1}
+.stepnav{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.dots{display:flex;gap:10px}
+.dots button{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:var(--paper);font-size:12px;color:var(--ink-2);transition:all .35s var(--ease)}
+.dots button:hover{border-color:var(--gold)}
+.dots button.on{background:var(--plum);border-color:var(--plum);color:#fff}
+.arrows{display:flex;gap:10px}
+.arrows button{height:42px;padding:0 18px;border-radius:999px;border:1px solid var(--ink);background:transparent;font-size:13px;letter-spacing:.05em;transition:all .3s var(--ease)}
+.arrows button:hover{background:var(--ink);color:var(--paper)}
+.arrows button:disabled{opacity:.3;pointer-events:none}
+.legend{display:flex;gap:18px;flex-wrap:wrap;font-size:12px;color:var(--ink-2)}
+.legend span{display:inline-flex;align-items:center;gap:8px}
+.legend i{width:10px;height:10px;border-radius:3px;display:inline-block}
+.refill-note{margin:10px 0 0;font-family:var(--serif);font-style:italic;font-size:26px;line-height:1.3;color:var(--violet);max-width:26ch}
+@media (max-width:900px){
+  .steps-grid{grid-template-columns:1fr;gap:0}
+  .stage-col{order:-1;position:sticky;top:56px;z-index:5;background:var(--ivory);padding:12px 0 10px}
+  .sticky{position:relative;top:0;height:46vh;min-height:320px}
+  .step{min-height:auto;padding:56px 0;opacity:.45}
+  .steps-col{padding-bottom:20vh}
+  .stepnav{flex-wrap:wrap;gap:10px}
+  .dots{gap:6px}.dots button{width:30px;height:30px}
+  .stepnav .arrows button{height:34px;padding:0 12px;font-size:12px}
+  .legend{display:none}
+}
+
+/* =========================================================
+   BOOSTERS
+   ========================================================= */
+.boosters{padding-bottom:140px}
+.boost-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:56px;align-items:start}
+.carts{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-top:34px}
+.cart-btn{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:18px 10px 16px;display:flex;flex-direction:column;align-items:center;gap:14px;
+  transition:transform .4s var(--ease),border-color .4s,box-shadow .4s}
+.cart-btn:hover{transform:translateY(-4px);border-color:var(--gold-2)}
+.cart-btn[aria-pressed="true"]{border-color:var(--plum);box-shadow:0 18px 40px rgba(58,37,96,.12);transform:translateY(-6px)}
+.cart-btn svg{width:46px;height:auto}
+.cart-btn span{font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2);text-align:center;line-height:1.35}
+.boost-detail{margin-top:36px;padding:32px;border-radius:22px;background:var(--paper);border:1px solid var(--line);position:relative;overflow:hidden}
+.boost-detail::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--boost);transition:background .5s}
+.boost-detail h3{font-size:40px;margin:6px 0 12px}
+.boost-detail p{font-size:16px;line-height:1.7;color:var(--ink-2);font-weight:300;margin:0;max-width:52ch}
+.ing{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0 0;padding:0;list-style:none}
+.ing li{font-size:13px;padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:#fff}
+.shared{margin-top:20px;font-size:13.5px;color:var(--ink-3)}
+.boost-stage{height:min(82vh,780px);position:sticky;top:96px}
+.fade-swap{animation:fadeup .6s var(--ease)}
+@keyframes fadeup{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media (max-width:1000px){.boost-grid{grid-template-columns:1fr}.boost-stage{position:relative;top:0;height:64vh;order:-1}.carts{grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}.cart-btn{padding:12px 4px}.cart-btn span{font-size:9.5px;letter-spacing:.06em}}
+
+/* =========================================================
+   Footer + scroll reveal
+   ========================================================= */
+footer{border-top:1px solid var(--line);padding:56px 0 64px;color:var(--ink-3);font-size:13px;line-height:1.7}
+footer .wrap{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap}
+footer b{font-weight:600;letter-spacing:.3em;color:var(--ink);font-size:12px}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity 1s var(--ease),transform 1s var(--ease)}
+.reveal.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *{animation:none!important}
+  .part,.nozzle,.ridges,.lvl,.fill,.ribbon,.reveal{transition-duration:.01s!important}
+}
+</style>
+</head>
+<body>
+
+<!-- ======================= NAV ======================= -->
+<nav class="nav" aria-label="Main">
+  <a class="brand" href="#top"><b>L'ORÉAL PARIS</b><span>R&amp;I concept</span></a>
+  <ul>
+    <li><a href="#product">Product</a></li>
+    <li><a href="#use">How to use</a></li>
+    <li><a href="#refill">Refills</a></li>
+    <li><a href="#boosters">Boosters</a></li>
+  </ul>
+</nav>
+
+<!-- ======================= 1 · HERO (interactive 3D) =======================
+     The section is 260vh tall; its inner .hero-pin sticks to the viewport so
+     scrolling through it drives the 3D bottle apart ("look inside").        -->
+<section class="hero3d" id="top">
+  <div class="hero-pin">
+    <canvas id="hero3d" aria-label="Interactive 3D model of the UV Defender Twin Serum Protector. Drag to rotate."></canvas>
+    <!-- fallback if WebGL or Three.js is unavailable -->
+    <div class="hero-fallback"><div class="float" style="height:100%"><svg class="scene" id="heroScene" viewBox="0 0 420 900" aria-hidden="true"></svg></div></div>
+
+    <div class="hero-labels" aria-hidden="true">
+      <div class="hl" data-k="pump"><i></i><span>Twin-outlet pump head</span></div>
+      <div class="hl" data-k="window"><i></i><span>Level window</span></div>
+      <div class="hl" data-k="sleeve"><i></i><span>Recycled-aluminium sleeve</span></div>
+      <div class="hl" data-k="cart"><i></i><span>Twin cartridge · SPF + booster</span></div>
+      <div class="hl" data-k="base"><i></i><span>Twist-lock base</span></div>
+    </div>
+
+    <div class="hero-copy">
+      <div class="phase phase-a">
+        <div class="eyebrow">UV Defender · Twin Serum Protector · SPF 50+</div>
+        <h1>Meet your new <em>UV Defence</em> ritual.</h1>
+        <p class="lede">Two serums. One press. Protection that adapts to you.</p>
+        <div class="hero-actions">
+          <button class="cta" data-scroll="#product">Explore how it works
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v12M2 8l5 5 5-5" stroke="currentColor" stroke-width="1.4"/></svg>
+          </button>
+          <button class="ghost" id="pressBtn">Press to dispense</button>
+          <button class="ghost" id="twistBtn">Twist to lock</button>
+        </div>
+      </div>
+      <div class="phase phase-b" aria-hidden="true">
+        <div class="eyebrow">Look inside</div>
+        <h1>One sleeve.<br><em>One twin cartridge.</em></h1>
+        <p class="lede">The sleeve, pump and base stay with you for good. Only the sealed cartridge is swapped when it runs low.</p>
+      </div>
+    </div>
+
+    <div class="hero-dock">
+      <div class="swatches" role="group" aria-label="Try a booster">
+        <span class="sw-label">Try a booster</span>
+        <button class="sw" data-i="0" style="--c:#EE9A80" aria-label="Dry / Textured"></button>
+        <button class="sw" data-i="1" style="--c:#9CC46A" aria-label="Oily"></button>
+        <button class="sw" data-i="2" style="--c:#7FB0E3" aria-label="Monsoon Heat"></button>
+        <button class="sw" data-i="3" style="--c:#EDC15A" aria-label="City Smog"></button>
+        <button class="sw" data-i="4" style="--c:#B8A9E4" aria-label="Sensitive"></button>
+        <span class="sw-name" id="swName">Dry / Textured</span>
+      </div>
+      <div class="hint"><span class="drag">Drag to rotate</span><span class="scrollcue">Scroll to look inside <b></b></span></div>
+    </div>
+    <div class="hero-progress"><i id="heroBar"></i></div>
+  </div>
+</section>
+
+<!-- ======================= 2 · MEET THE PRODUCT ======================= -->
+<section class="meet" id="product">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">01 · Meet the product</div>
+      <h2>Six parts. One quiet<br>piece of engineering.</h2>
+      <p class="lede">Select a part to see what it does. The sleeve, pump and base stay with you; only the cartridge is replaced.</p>
+    </div>
+    <div class="meet-grid">
+      <div class="reveal">
+        <ul class="parts-list" id="partsList">
+          <li><button data-part="pump" aria-pressed="false"><span class="n">01</span><span class="t">Twin-outlet pump head</span></button><div class="d"><div>Two separate channels end in two side-by-side outlets, so the SPF base and your booster leave the bottle as two ribbons. The nozzle seals itself between uses.</div></div></li>
+          <li><button data-part="twistlock" aria-pressed="false"><span class="n">02</span><span class="t">Twist-lock mechanism</span></button><div class="d"><div>A quarter turn of the pump head opens or locks the bottle. The base also twists a quarter turn to hold the cartridge in place, and only clicks shut when the cartridge is seated correctly.</div></div></li>
+          <li><button data-part="window" aria-pressed="false"><span class="n">03</span><span class="t">Transparent level window</span></button><div class="d"><div>A slim window shows both serum levels at a glance. The fittings at the top and bottom of the cartridge stay hidden behind the sleeve.</div></div></li>
+          <li><button data-part="sleeve" aria-pressed="false"><span class="n">04</span><span class="t">Recycled-aluminium sleeve</span></button><div class="d"><div>A thin, anodised sleeve over a light recycled-plastic frame. Keep it for years; it's the part you never throw away. A green marking appears in its slot when the cartridge is locked.</div></div></li>
+          <li><button data-part="spf" aria-pressed="false"><span class="n">05</span><span class="t">SPF 50+ base</span></button><div class="d"><div>The left chamber of every cartridge holds the same broad-spectrum SPF 50+ PA++++ base with vitamin E. Every press delivers the full sunscreen dose.</div></div></li>
+          <li><button data-part="booster" aria-pressed="false"><span class="n">06</span><span class="t">Interchangeable booster cartridge</span></button><div class="d"><div>The right chamber holds your booster: one of five, chosen for your skin type or climate. Both chambers form one frosted, airless cartridge that you swap as a single piece.</div></div></li>
+        </ul>
+      </div>
+      <div class="meet-stage reveal"><div class="stage" id="meetStage"><span class="stage-caption">Exploded view</span><svg class="scene" id="meetScene" viewBox="0 0 760 1010"></svg></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= 3 · HOW TO USE ======================= -->
+<section id="use">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">02 · How to use it</div>
+      <h2>Your morning,<br>in five movements.</h2>
+      <p class="lede">Scroll, or use the step controls, to watch each step on the bottle.</p>
+    </div>
+    <div class="steps-grid" data-flow="use">
+      <div class="steps-col">
+        <article class="step" data-step="0">
+          <div class="num">STEP 01</div><h3>Insert your cartridge.</h3>
+          <p>Your starter kit comes with the bottle and one cartridge. It only fits one way.</p>
+          <ol><li>Hold the cartridge with the shaped tab facing up.</li><li>Line the tab up with the slot inside the sleeve.</li><li>Slide it in, then twist the base a quarter turn until it clicks.</li></ol>
+          <div class="note"><b>How you know it's right:</b> the green marking printed on the cartridge appears in the slot near the base.</div>
+        </article>
+        <article class="step" data-step="1">
+          <div class="num">STEP 02</div><h3>Twist to unlock.</h3>
+          <p>Turn the pump head a quarter turn. The twin outlets swing forward and the nozzle opens.</p>
+          <ol><li>Hold the sleeve in one hand.</li><li>Turn the pump head a quarter turn in the direction of the arrow.</li></ol>
+          <div class="note"><b>Ready:</b> the outlets face forward and the small dot on the pump head shows open.</div>
+        </article>
+        <article class="step" data-step="2">
+          <div class="num">STEP 03</div><h3>Dispense your serum.</h3>
+          <p>Press the pump twice. Two ribbons come out side by side: the cream SPF base and your coloured booster.</p>
+          <ol><li>Hold your fingertips under the outlets.</li><li>Press down fully, twice, for one full-face dose.</li></ol>
+          <div class="note"><b>Same protection every time:</b> each press gives a fixed SPF dose plus a fixed booster dose.</div>
+        </article>
+        <article class="step" data-step="3">
+          <div class="num">STEP 04</div><h3>Blend and apply.</h3>
+          <p>Bring the two ribbons together with your fingertips, then smooth evenly over your face and neck.</p>
+          <ol><li>Blend in small circles until it's one even colour.</li><li>Apply as the last step of your morning routine.</li><li>Reapply through the day if you're in strong sun.</li></ol>
+          <div class="note">The booster's sheer tint comes from the formula itself and disappears as you blend.</div>
+        </article>
+        <article class="step" data-step="4">
+          <div class="num">STEP 05</div><h3>Twist back to lock.</h3>
+          <p>Turn the pump head back a quarter turn. The outlets swing away and the nozzle seals shut, ready for your bag.</p>
+          <ol><li>Turn the pump head back against the arrow.</li><li>Feel the click: it's locked and sealed.</li></ol>
+          <div class="note"><b>Locked:</b> the pump can't be pressed, so nothing leaks or dries on the tip.</div>
+        </article>
+      </div>
+      <div class="stage-col">
+        <div class="sticky">
+          <div class="stage" id="useStage"><span class="stage-caption" data-cap>Step 01 · Insert</span><svg class="scene" id="useScene" viewBox="0 0 640 1080"></svg><div class="chip"><i></i><span></span></div></div>
+          <div class="stepnav">
+            <div class="dots" role="tablist" aria-label="How to use steps"></div>
+            <div class="arrows"><button data-prev>Previous</button><button data-next>Next</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= 4 · REFILL ======================= -->
+<section id="refill">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">03 · Time for a refill</div>
+      <h2>Keep the sleeve.<br>Swap the cartridge.</h2>
+      <p class="lede">A new cartridge clicks in within seconds. Watch which parts stay and which part is replaced.</p>
+    </div>
+    <div class="steps-grid" data-flow="refill">
+      <div class="steps-col">
+        <article class="step" data-step="0">
+          <div class="num">STEP 01</div><h3>Check the level window.</h3>
+          <p>As you use it, both serum levels drop in the window on the front of the sleeve.</p>
+          <ol><li>Look at the window each morning.</li><li>When the levels reach the bottom mark, it's time for a new cartridge.</li></ol>
+          <div class="note">Both chambers are sized to run out together, so you never replace half a cartridge.</div>
+        </article>
+        <article class="step" data-step="1">
+          <div class="num">STEP 02</div><h3>Unlock the bottle.</h3>
+          <p>Twist the base a quarter turn the other way. It unclicks and comes away from the sleeve.</p>
+          <ol><li>Make sure the pump head is locked first.</li><li>Twist the base a quarter turn and pull it gently down.</li></ol>
+        </article>
+        <article class="step" data-step="2">
+          <div class="num">STEP 03</div><h3>Remove the empty cartridge.</h3>
+          <p>The cartridge slides out of the sleeve in one piece. Its valves close automatically, so nothing drips.</p>
+          <ol><li>Slide the cartridge down and out.</li><li>Return the empty to the in-store collection bin for recycling.</li></ol>
+          <div class="note"><b>Cartridges aren't opened or topped up.</b> Each one is sealed and swapped whole for a new refill.</div>
+        </article>
+        <article class="step" data-step="3">
+          <div class="num">STEP 04</div><h3>Insert a new cartridge.</h3>
+          <p>Peel the seals off a fresh cartridge, line up the shaped tab and slide it in until it stops.</p>
+          <ol><li>Remove both peel-off seals from the outlets.</li><li>Tab up, aligned with the slot, slide it fully in.</li></ol>
+        </article>
+        <article class="step" data-step="4">
+          <div class="num">STEP 05</div><h3>Twist and secure.</h3>
+          <p>Put the base back on and twist a quarter turn until it clicks. The green marking shows the cartridge is locked.</p>
+          <ol><li>Push the base up onto the sleeve.</li><li>Twist until it clicks and the green marking appears.</li></ol>
+          <p class="refill-note">Keep the outer sleeve. Replace the cartridge. Less packaging, more thoughtful skincare.</p>
+        </article>
+      </div>
+      <div class="stage-col">
+        <div class="sticky">
+          <div class="stage" id="refillStage"><span class="stage-caption" data-cap>Step 01 · Check</span><svg class="scene" id="refillScene" viewBox="0 0 640 1080"></svg><div class="chip"><i></i><span></span></div></div>
+          <div class="stepnav">
+            <div class="dots" role="tablist" aria-label="Refill steps"></div>
+            <div class="arrows"><button data-prev>Previous</button><button data-next>Next</button></div>
+          </div>
+          <div class="legend"><span><i style="background:var(--violet)"></i>Keep: sleeve, pump, base</span><span><i style="background:var(--boost)"></i>Replace: cartridge</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= 5 · BOOSTERS ======================= -->
+<section class="boosters" id="boosters">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">04 · Choose your booster</div>
+      <h2>One SPF.<br>Five ways to tune it.</h2>
+      <p class="lede">Pick the cartridge that matches your skin today, or the weather outside. Switch whenever your season changes.</p>
+    </div>
+    <div class="boost-grid">
+      <div class="reveal">
+        <div class="carts" id="carts" role="group" aria-label="Booster cartridges"></div>
+        <div class="boost-detail" id="boostDetail" aria-live="polite"></div>
+        <p class="shared">All five cartridges share the same SPF 50+ PA++++ sunscreen base. Only the booster chamber changes.</p>
+      </div>
+      <div class="boost-stage reveal"><div class="stage" id="boostStage"><span class="stage-caption" data-cap>Inserting cartridge</span><svg class="scene" id="boostScene" viewBox="0 0 640 1080"></svg><div class="chip"><i></i><span></span></div></div></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div><b>L'ORÉAL PARIS</b><br>UV Defender Twin Serum Protector · conceptual product for an R&amp;I challenge. Not for sale.</div>
+    <div>Recycled-aluminium sleeve · mono-material cartridge · in-store cartridge return</div>
+  </div>
+</footer>
+
+<script>
+/* =================================================================
+   1. BOTTLE GEOMETRY
+   The bottle is drawn once as SVG, with each moving component in its
+   own <g class="part">. Every scene (hero, meet, use, refill, boosters)
+   gets its own copy with an id prefix so gradients don't collide.
+   Coordinate system: bottle centred on x=180, top of pump at y≈58.
+   ================================================================= */
+function bottleMarkup(p){
+  return `
+  <defs>
+    <linearGradient id="${p}violet" x1="0" x2="1">
+      <stop offset="0" stop-color="#22173E"/><stop offset=".18" stop-color="#3A2560"/><stop offset=".42" stop-color="#6A55B4"/>
+      <stop offset=".52" stop-color="#8F7CD0"/><stop offset=".66" stop-color="#5A44A0"/><stop offset="1" stop-color="#1E1438"/>
+    </linearGradient>
+    <linearGradient id="${p}black" x1="0" x2="1">
+      <stop offset="0" stop-color="#0E0D12"/><stop offset=".4" stop-color="#3A3842"/><stop offset=".55" stop-color="#4A4853"/><stop offset="1" stop-color="#0E0D12"/>
+    </linearGradient>
+    <linearGradient id="${p}silver" x1="0" x2="1">
+      <stop offset="0" stop-color="#8F8A84"/><stop offset=".45" stop-color="#F1EBDD"/><stop offset=".6" stop-color="#D9C9A6"/><stop offset="1" stop-color="#857A66"/>
+    </linearGradient>
+    <linearGradient id="${p}frost" x1="0" x2="1">
+      <stop offset="0" stop-color="#D9D4E2"/><stop offset=".45" stop-color="#FFFFFF"/><stop offset="1" stop-color="#CFC9D9"/>
+    </linearGradient>
+    <linearGradient id="${p}spf" x1="0" x2="1"><stop offset="0" stop-color="#EDE5D6"/><stop offset=".5" stop-color="#FFFCF5"/><stop offset="1" stop-color="#E6DCCA"/></linearGradient>
+    <linearGradient id="${p}gloss" x1="0" x2="1">
+      <stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".38"/><stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="${p}shadow" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#2A1E40" stop-opacity=".28"/><stop offset="1" stop-color="#2A1E40" stop-opacity="0"/></radialGradient>
+    <clipPath id="${p}sleeveClip"><rect x="112" y="140" width="136" height="420" rx="44"/></clipPath>
+    <clipPath id="${p}windowClip"><rect x="170" y="196" width="20" height="300" rx="10"/></clipPath>
+    <clipPath id="${p}pumpClip"><rect x="122" y="58" width="116" height="62" rx="20"/></clipPath>
+    <clipPath id="${p}baseClip"><rect x="120" y="560" width="120" height="40" rx="14"/></clipPath>
+  </defs>
+
+  <g class="bottle-g">
+    <!-- floor shadow -->
+    <ellipse class="part shadow" cx="180" cy="626" rx="110" ry="14" fill="url(#${p}shadow)"/>
+
+    <!-- CARTRIDGE (drawn behind the sleeve so the sleeve hides it when inserted) -->
+    <g class="part cartridge" data-part="cartridge">
+      <rect x="134" y="160" width="92" height="388" rx="30" fill="url(#${p}frost)" stroke="#BDB6C8"/>
+      <!-- shaped tab (key) -->
+      <path d="M168 160 L168 146 Q168 140 174 140 L186 140 Q192 140 192 146 L192 160 Z" fill="#BDB6C8"/>
+      <rect x="176" y="143" width="8" height="8" rx="1" fill="#9E97AB"/>
+      <!-- valves -->
+      <circle cx="158" cy="172" r="5" fill="#8C8698"/><circle cx="202" cy="172" r="5" fill="#8C8698"/>
+      <!-- chambers -->
+      <g class="chamber" data-part="spf">
+        <rect x="142" y="184" width="34" height="334" rx="15" fill="#F4EFE6" stroke="#DCD3C4"/>
+        <rect class="fill fill-spf" x="144" y="186" width="30" height="330" rx="14" fill="url(#${p}spf)"/>
+      </g>
+      <g class="chamber" data-part="booster">
+        <rect x="184" y="184" width="34" height="334" rx="15" fill="#F7F1EE" stroke="#DCD3C4"/>
+        <rect class="fill fill-boost" x="186" y="186" width="30" height="330" rx="14" style="fill:var(--boost)"/>
+      </g>
+      <!-- printed green marking band -->
+      <rect x="134" y="526" width="92" height="10" fill="#4FA36A"/>
+      <!-- frosted gloss -->
+      <rect x="150" y="166" width="10" height="370" rx="5" fill="#fff" opacity=".45"/>
+    </g>
+
+    <!-- BASE (twist-lock) -->
+    <g class="part base" data-part="twistlock">
+      <rect x="120" y="560" width="120" height="40" rx="14" fill="url(#${p}black)"/>
+      <g clip-path="url(#${p}baseClip)"><g class="ridges base-ridges">
+        ${Array.from({length:16},(_,i)=>`<rect x="${104+i*10}" y="568" width="2.2" height="24" rx="1" fill="#55525E" opacity=".7"/>`).join('')}
+      </g></g>
+      <rect x="120" y="560" width="120" height="6" rx="3" fill="#000" opacity=".25"/>
+    </g>
+
+    <!-- SLEEVE -->
+    <g class="part sleeve" data-part="sleeve">
+      <rect x="112" y="140" width="136" height="420" rx="44" fill="url(#${p}violet)"/>
+      <!-- slow-moving specular highlight gives a sense of rotation -->
+      <g clip-path="url(#${p}sleeveClip)"><rect class="sheen" x="120" y="140" width="40" height="420" fill="url(#${p}gloss)"/></g>
+      <!-- top and bottom bands hide the cartridge fittings -->
+      <g clip-path="url(#${p}sleeveClip)">
+        <rect x="112" y="140" width="136" height="38" fill="#1E1438" opacity=".38"/>
+        <rect x="112" y="520" width="136" height="40" fill="#1E1438" opacity=".38"/>
+      </g>
+      <!-- engraved wordmark -->
+      <text x="180" y="166" text-anchor="middle" font-family="Inter,sans-serif" font-size="8" letter-spacing="2.6" fill="#E9E1FA" opacity=".85">UV DEFENDER</text>
+      <text x="138" y="360" font-family="Cormorant Garamond,serif" font-style="italic" font-size="13" fill="#EFE8FF" opacity=".75" transform="rotate(-90 138 360)">Twin Serum Protector</text>
+      <text x="226" y="360" font-family="Inter,sans-serif" font-size="8" letter-spacing="2" fill="#EFE8FF" opacity=".75" transform="rotate(-90 226 360)">SPF 50+ PA++++</text>
+      <!-- level window with gold rim -->
+      <g class="window-g" data-part="window">
+        <rect x="168" y="194" width="24" height="304" rx="12" fill="#2A1E48" stroke="#D9BF8C" stroke-width="1.6"/>
+        <g clip-path="url(#${p}windowClip)">
+          <rect x="170" y="196" width="20" height="300" fill="#EDE7F7"/>
+          <rect class="lvl lvl-spf" x="171" y="196" width="8.5" height="300" fill="#FFFBF2"/>
+          <rect class="lvl lvl-boost" x="180.5" y="196" width="8.5" height="300" style="fill:var(--boost)"/>
+          <rect x="170" y="482" width="20" height="1.4" fill="#B08D57" opacity=".8"/>
+        </g>
+      </g>
+      <!-- green marking slot -->
+      <rect x="216" y="532" width="20" height="12" rx="3" fill="#120C22"/>
+      <rect class="green-slot" x="219" y="535" width="14" height="6" rx="1.5" fill="#2A2238"/>
+    </g>
+
+    <!-- COLLAR -->
+    <g class="part collar" data-part="twistlock">
+      <rect x="118" y="120" width="124" height="20" rx="6" fill="url(#${p}silver)"/>
+    </g>
+
+    <!-- PUMP HEAD -->
+    <g class="part pump" data-part="pump">
+      <!-- nozzle with twin outlets: scaleX shrinks it when "turned away" (locked) -->
+      <g class="nozzle">
+        <path d="M232 78 L278 82 Q290 84 290 96 Q290 108 278 110 L232 112 Z" fill="url(#${p}black)"/>
+        <circle cx="284" cy="90" r="3.6" fill="#FFF8EC" stroke="#000" stroke-opacity=".4"/>
+        <circle cx="284" cy="102" r="3.6" style="fill:var(--boost)" stroke="#000" stroke-opacity=".4"/>
+      </g>
+      <rect x="122" y="58" width="116" height="62" rx="20" fill="url(#${p}black)"/>
+      <g clip-path="url(#${p}pumpClip)"><g class="ridges pump-ridges">
+        ${Array.from({length:16},(_,i)=>`<rect x="${106+i*10}" y="66" width="2.2" height="46" rx="1" fill="#5C5966" opacity=".55"/>`).join('')}
+      </g></g>
+      <rect x="128" y="60" width="104" height="8" rx="4" fill="#fff" opacity=".08"/>
+      <circle class="pump-dot" cx="180" cy="66" r="3" fill="#6B6774"/>
+    </g>
+
+    <!-- twist arrows (shown during twist steps) -->
+    <g class="twist twist-pump"><path d="M110 92 Q180 40 250 92" fill="none" stroke="#B08D57" stroke-width="2" stroke-dasharray="6 6"/><path d="M242 82 L252 94 L238 96" fill="none" stroke="#B08D57" stroke-width="2" stroke-linecap="round"/></g>
+    <g class="twist twist-base"><path d="M108 612 Q180 652 252 612" fill="none" stroke="#B08D57" stroke-width="2" stroke-dasharray="6 6"/><path d="M242 610 L254 612 L248 624" fill="none" stroke="#B08D57" stroke-width="2" stroke-linecap="round"/></g>
+
+    <!-- serum ribbons (step 3) -->
+    <path class="ribbon rib-spf-edge" d="M290 90 C 330 90, 352 120, 350 170 S 330 250, 340 290" stroke="#CFC3B0" stroke-width="13"/>
+    <path class="ribbon rib-spf" d="M290 90 C 330 90, 352 120, 350 170 S 330 250, 340 290" stroke="#FFFBF2" stroke-width="10"/>
+    <path class="ribbon rib-boost" d="M290 102 C 322 104, 338 132, 336 178 S 318 254, 326 292" style="stroke:var(--boost)" stroke-width="10"/>
+  </g>`;
+}
+
+/* Hand overlay used in "Blend and apply" */
+function handMarkup(){
+  return `
+  <g class="hand-layer">
+    <g transform="translate(150 340)">
+      <path d="M70 330 Q40 210 92 170 L98 70 Q100 46 122 48 Q140 50 140 74 L142 150 L152 40 Q156 16 178 18 Q200 22 196 48 L190 148 L210 58 Q216 34 238 40 Q258 46 250 72 L234 160 L266 104 Q280 84 298 94 Q314 106 302 128 L258 260 Q240 340 176 362 Q108 380 70 330 Z"
+        fill="#EBCDB6" stroke="#C9A58A" stroke-width="1.2"/>
+      <path d="M96 300 Q150 316 210 296" fill="none" stroke="#D7B398" stroke-width="1"/>
+      <path class="ribbon-on-hand" d="M118 238 Q160 214 214 220" fill="none" stroke="#FFFBF2" stroke-width="13" stroke-linecap="round"/>
+      <path class="ribbon-on-hand" d="M118 238 Q160 214 214 220" fill="none" stroke="#D9CFBF" stroke-width="15" stroke-linecap="round" opacity=".35"/>
+      <path class="ribbon-on-hand" d="M122 258 Q164 236 216 242" fill="none" style="stroke:var(--boost)" stroke-width="13" stroke-linecap="round"/>
+      <ellipse class="blend" cx="168" cy="240" rx="58" ry="26" fill="#F6E7DA" opacity=".9"/>
+      <ellipse class="blend" cx="168" cy="240" rx="40" ry="16" fill="#FBF3EA"/>
+      <circle class="fingertip" cx="168" cy="240" r="16" fill="#E3BFA5" stroke="#C9A58A"/>
+    </g>
+  </g>`;
+}
+
+/* =================================================================
+   2. STAGE CONTROLLER
+   Each scene is driven by a plain "state" object. apply(state) sets
+   CSS transforms on the parts; CSS transitions do the motion.
+   seq() chains timed sub-states for multi-beat animations, and any
+   new step cancels the previous step's pending timers.
+   ================================================================= */
+const DEFAULT = {
+  pumpY:0, open:false, pressed:false,
+  cartX:0, cartY:0, cartOpacity:1, cartLvl:1,
+  baseX:0, baseY:0, baseTwist:false,
+  sleeveY:0, collarY:0,
+  green:true, lvl:1, ribbons:false,
+  hand:false, blend:false, twist:null, chip:null, highlight:null
+};
+
+class Stage{
+  constructor(svg, prefix, opts={}){
+    this.svg = svg; this.root = svg.closest('.stage') || svg.parentElement;
+    this.timers = [];
+    svg.innerHTML = (opts.offsetX!==undefined ? `<g transform="translate(${opts.offsetX} ${opts.offsetY||0})">` : `<g transform="translate(30 40)">`)
+                    + bottleMarkup(prefix) + '</g>' + (opts.hand ? handMarkup() : '') + (opts.extra||'');
+    const q = s => svg.querySelector(s);
+    this.el = {
+      pump:q('.pump'), nozzle:q('.nozzle'), pumpRidges:q('.pump-ridges'), pumpDot:q('.pump-dot'),
+      collar:q('.collar'), sleeve:q('.sleeve'), cart:q('.cartridge'), base:q('.base'), baseRidges:q('.base-ridges'),
+      green:q('.green-slot'), lvlSpf:q('.lvl-spf'), lvlBoost:q('.lvl-boost'),
+      fillSpf:q('.fill-spf'), fillBoost:q('.fill-boost'), shadow:q('.shadow'),
+      twistPump:q('.twist-pump'), twistBase:q('.twist-base'), sheen:q('.sheen')
+    };
+    this.chipEl = this.root.querySelector('.chip');
+    this.state = {...DEFAULT};
+    this.apply(this.state, true);
+  }
+  clear(){ this.timers.forEach(clearTimeout); this.timers = []; }
+  seq(list){ // list of [delayMs, partialState]
+    this.clear(); let t = 0;
+    list.forEach(([d, s]) => { t += d; this.timers.push(setTimeout(() => this.apply({...this.state, ...s}), t)); });
+  }
+  /* jump without animation (used to reset a component off-screen before animating it in) */
+  snap(s){ this.svg.classList.add('no-anim'); this.apply({...this.state, ...s}); this.svg.getBoundingClientRect(); requestAnimationFrame(()=>this.svg.classList.remove('no-anim')); }
+  apply(s, instant){
+    this.state = s; const e = this.el;
+    if(instant) this.svg.classList.add('no-anim');
+    e.pump.classList.toggle('press', !!s.pressed);
+    e.pump.style.transform = `translateY(${s.pumpY + (s.pressed?9:0)}px)`;
+    e.nozzle.style.transform = `scaleX(${s.open?1:.1})`;
+    e.nozzle.style.opacity = s.open?1:.5;
+    e.pumpRidges.style.transform = `translateX(${s.open?-15:0}px)`;
+    e.pumpDot.style.fill = s.open ? '#4FA36A' : '#6B6774';
+    e.collar.style.transform = `translateY(${s.collarY}px)`;
+    e.sleeve.style.transform = `translateY(${s.sleeveY}px)`;
+    e.cart.style.transform = `translate(${s.cartX}px, ${s.cartY}px)`;
+    e.cart.style.opacity = s.cartOpacity;
+    e.base.style.transform = `translate(${s.baseX}px, ${s.baseY}px)`;
+    e.baseRidges.style.transform = `translateX(${s.baseTwist?-15:0}px)`;
+    e.green.style.fill = s.green ? '#57C27A' : '#2A2238';
+    e.lvlSpf.style.transform = e.lvlBoost.style.transform = `scaleY(${s.lvl})`;
+    e.fillSpf.style.transform = e.fillBoost.style.transform = `scaleY(${s.cartLvl})`;
+    e.twistPump.classList.toggle('on', s.twist==='pump');
+    e.twistBase.classList.toggle('on', s.twist==='base');
+    this.svg.classList.toggle('ribbons-on', !!s.ribbons);
+    this.svg.classList.toggle('show-hand', !!s.hand);
+    this.svg.classList.toggle('blending', !!s.blend);
+    if(this.chipEl){
+      this.chipEl.classList.toggle('show', !!s.chip);
+      if(s.chip) this.chipEl.querySelector('span').textContent = s.chip;
+    }
+    if(instant){ this.svg.getBoundingClientRect(); requestAnimationFrame(()=>this.svg.classList.remove('no-anim')); }
+  }
+}
+
+/* Positions reused by several steps (in bottle units) */
+const OUT = { cartX: 210, cartY: 60, baseX: 210, baseY: 230 }; // cartridge and base set beside the bottle
+const BELOW = 420;                                          // cartridge aligned just below the sleeve
+
+/* =================================================================
+   3. HERO — assembled bottle, gentle sheen sweep (rotation feel)
+   ================================================================= */
+const hero = new Stage(document.getElementById('heroScene'), 'h', {offsetX:30, offsetY:60});
+hero.apply({...DEFAULT, open:true}, true);
+(function sweep(){ // move the specular highlight left↔right to suggest a slow turn
+  const s = hero.el.sheen; let t = 0;
+  function frame(){ t += 0.006; s.setAttribute('x', 120 + (Math.sin(t)*0.5+0.5)*60); requestAnimationFrame(frame); }
+  if(!matchMedia('(prefers-reduced-motion: reduce)').matches) frame();
+})();
+
+/* =================================================================
+   4. MEET THE PRODUCT — exploded view + clickable hotspots
+   ================================================================= */
+const hotspots = [
+  {part:'pump',      label:'Twin-outlet pump head',   tx:40,  ty:96,  ax:324, ay:92,  anchor:'start'},
+  {part:'twistlock', label:'Twist-lock mechanism',    tx:720, ty:150, ax:442, ay:156, anchor:'end'},
+  {part:'window',    label:'Level window',            tx:720, ty:360, ax:392, ay:360, anchor:'end'},
+  {part:'sleeve',    label:'Recycled-aluminium sleeve',tx:40, ty:440, ax:314, ay:440, anchor:'start'},
+  {part:'spf',       label:'SPF 50+ base',            tx:40,  ty:770, ax:358, ay:770, anchor:'start'},
+  {part:'booster',   label:'Booster cartridge',       tx:720, ty:800, ax:402, ay:800, anchor:'end'}
+];
+const hotspotSVG = hotspots.map((h,i)=>`
+  <g class="hotspot" data-part="${h.part}" tabindex="0" role="button" aria-label="${h.label}">
+    <line x1="${h.anchor==='start'?h.tx+ (h.label.length*8.6):h.tx-(h.label.length*8.6)}" y1="${h.ty-5}" x2="${h.ax}" y2="${h.ay}" stroke="#C7B9A3" stroke-width="1"/>
+    <circle cx="${h.ax}" cy="${h.ay}" r="5" fill="#fff" stroke="#B08D57" stroke-width="1.4"/>
+    <text class="t" x="${h.tx}" y="${h.ty}" text-anchor="${h.anchor}" font-family="Inter,sans-serif" font-size="16" font-weight="500" fill="#221D2B">${h.label}</text>
+    <text x="${h.tx}" y="${h.ty-22}" text-anchor="${h.anchor}" font-family="Cormorant Garamond,serif" font-size="15" fill="#B08D57">0${i+1}</text>
+  </g>`).join('');
+const meet = new Stage(document.getElementById('meetScene'), 'm', {offsetX:200, offsetY:40, extra:hotspotSVG});
+meet.apply({...DEFAULT, open:true, pumpY:-34, collarY:-14, cartY:400, baseX:170, baseY:340, lvl:0}, true);
+
+function highlight(part){
+  const svg = meet.svg;
+  svg.classList.toggle('dim', !!part);
+  svg.querySelectorAll('.part, .chamber').forEach(n => n.classList.remove('hl'));
+  if(part){
+    // map each list item to the parts that should light up
+    const map = { pump:['.pump'], twistlock:['.collar','.base','.pump'], window:['.sleeve'], sleeve:['.sleeve'],
+                  spf:['.cartridge','.chamber[data-part="spf"]'], booster:['.cartridge','.chamber[data-part="booster"]'] };
+    map[part].forEach(sel => svg.querySelectorAll(sel).forEach(n => n.classList.add('hl')));
+    if(part==='spf' || part==='booster'){ svg.querySelectorAll('.chamber').forEach(c => { if(!c.classList.contains('hl')) c.style.opacity=.25; }); }
+  }
+  if(!(part==='spf'||part==='booster')) svg.querySelectorAll('.chamber').forEach(c=>c.style.opacity='');
+  else svg.querySelectorAll('.chamber.hl').forEach(c=>c.style.opacity='');
+  svg.querySelectorAll('.hotspot').forEach(h => h.classList.toggle('on', h.dataset.part===part));
+  document.querySelectorAll('#partsList li').forEach(li => {
+    const on = li.querySelector('button').dataset.part === part;
+    li.classList.toggle('open', on); li.querySelector('button').setAttribute('aria-pressed', on);
+  });
+}
+let current = null;
+function pick(part){ current = (current===part) ? null : part; highlight(current); }
+document.querySelectorAll('#partsList button').forEach(b => b.addEventListener('click', () => pick(b.dataset.part)));
+meet.svg.querySelectorAll('.hotspot').forEach(h => {
+  h.addEventListener('click', () => pick(h.dataset.part));
+  h.addEventListener('keydown', ev => { if(ev.key==='Enter'||ev.key===' '){ ev.preventDefault(); pick(h.dataset.part);} });
+});
+
+/* =================================================================
+   5. STEP FLOWS — each step is a short sequence of states.
+   ================================================================= */
+const useStage = new Stage(document.getElementById('useScene'), 'u', {hand:true, offsetX:110, offsetY:90});
+const refillStage = new Stage(document.getElementById('refillScene'), 'r', {offsetX:110, offsetY:90});
+
+const USE = [
+  { cap:'Step 01 · Insert', run: st => {          // cartridge aligned below, slides in, base twists on, green appears
+      st.snap({...DEFAULT, ...OUT, green:false, lvl:0, open:false});
+      st.seq([[500,{cartX:0, cartY:BELOW}], [1300,{cartY:0, lvl:1}], [1100,{baseX:0, baseY:0}], [900,{baseTwist:true, twist:'base'}],
+              [900,{green:true, twist:null, chip:'Cartridge locked'}]]);
+  }},
+  { cap:'Step 02 · Unlock', run: st => {          // pump head turns a quarter: ridges slide, nozzle swings forward
+      st.snap({...DEFAULT, baseTwist:true});
+      st.seq([[300,{twist:'pump'}], [700,{open:true}], [900,{twist:null, chip:'Ready to dispense'}]]);
+  }},
+  { cap:'Step 03 · Dispense', run: st => {        // two presses, two ribbons
+      st.snap({...DEFAULT, baseTwist:true, open:true});
+      st.seq([[400,{pressed:true}], [280,{pressed:false, ribbons:true}], [700,{pressed:true}], [280,{pressed:false}],
+              [900,{chip:'Two ribbons · one dose'}]]);
+  }},
+  { cap:'Step 04 · Blend and apply', run: st => { // ribbons on skin, then fingertip blends them
+      st.snap({...DEFAULT, baseTwist:true, open:true, ribbons:true});
+      st.seq([[300,{hand:true, ribbons:false}], [1600,{blend:true}], [1600,{chip:'Face and neck, evenly'}]]);
+  }},
+  { cap:'Step 05 · Lock', run: st => {             // pump turns back, nozzle seals
+      st.snap({...DEFAULT, baseTwist:true, open:true});
+      st.seq([[400,{twist:'pump'}], [700,{open:false}], [900,{twist:null, chip:'Locked and ready'}]]);
+  }}
+];
+
+const REFILL = [
+  { cap:'Step 01 · Check the window', run: st => { // levels fall to the low mark
+      st.snap({...DEFAULT, baseTwist:true, lvl:1, cartLvl:1});
+      st.seq([[400,{lvl:.55, cartLvl:.55}], [1000,{lvl:.06, cartLvl:.06}], [1000,{chip:'Running low · time for a refill'}]]);
+  }},
+  { cap:'Step 02 · Unlock the base', run: st => {  // base twists back and drops away
+      st.snap({...DEFAULT, baseTwist:true, lvl:.06, cartLvl:.06});
+      st.seq([[300,{twist:'base'}], [700,{baseTwist:false, green:false}], [700,{twist:null, baseY:70}], [700,{baseX:OUT.baseX, baseY:OUT.baseY, chip:'Base released · keep it'}]]);
+  }},
+  { cap:'Step 03 · Remove the cartridge', run: st => { // cartridge slides out and away
+      st.snap({...DEFAULT, baseX:OUT.baseX, baseY:OUT.baseY, green:false, lvl:.06, cartLvl:.06});
+      // slides straight down out of the sleeve, then is set aside as a separate piece
+      st.seq([[400,{cartY:BELOW, lvl:0}], [1500,{cartX:OUT.cartX, cartY:OUT.cartY, cartOpacity:.85}], [900,{chip:'Empty cartridge · return in store'}]]);
+  }},
+  { cap:'Step 04 · Insert a new cartridge', run: st => { // old one leaves, fresh one aligns and slides in
+      st.snap({...DEFAULT, baseX:OUT.baseX, baseY:OUT.baseY, green:false, lvl:0, cartX:OUT.cartX, cartY:OUT.cartY, cartOpacity:.85, cartLvl:.06});
+      st.seq([[300,{cartX:OUT.cartX+260, cartOpacity:0}]]);           // empty leaves the scene
+      st.timers.push(setTimeout(()=>{ st.snap({cartX:OUT.cartX, cartY:OUT.cartY+40, cartOpacity:0, cartLvl:1}); // fresh one appears
+        st.seq([[60,{cartY:OUT.cartY, cartOpacity:1}], [900,{cartX:0, cartY:BELOW}], [1200,{cartY:0, lvl:1}], [1100,{chip:'Fresh cartridge in place'}]]); }, 1000));
+  }},
+  { cap:'Step 05 · Twist and secure', run: st => { // base returns and clicks; green marking appears
+      st.snap({...DEFAULT, baseX:OUT.baseX, baseY:OUT.baseY, green:false, lvl:1, cartLvl:1});
+      st.seq([[300,{baseX:0, baseY:0}], [1100,{twist:'base', baseTwist:true}], [800,{green:true, twist:null}], [500,{chip:'Refill complete'}]]);
+  }}
+];
+
+/* Wire a step flow: scroll-driven + clickable dots + prev/next buttons */
+function wireFlow(grid, stage, steps){
+  const cards = [...grid.querySelectorAll('.step')];
+  const dots = grid.querySelector('.dots'), cap = grid.querySelector('[data-cap]');
+  const prev = grid.querySelector('[data-prev]'), next = grid.querySelector('[data-next]');
+  let active = -1, lock = false;
+  cards.forEach((c,i) => {
+    const b = document.createElement('button'); b.textContent = i+1; b.setAttribute('aria-label', 'Step '+(i+1));
+    b.addEventListener('click', () => go(i, true)); dots.appendChild(b);
+  });
+  function go(i, scroll){
+    i = Math.max(0, Math.min(cards.length-1, i));
+    if(i !== active){
+      active = i;
+      cards.forEach((c,k) => c.classList.toggle('active', k===i));
+      [...dots.children].forEach((d,k) => d.classList.toggle('on', k===i));
+      prev.disabled = i===0; next.disabled = i===cards.length-1;
+      cap.textContent = steps[i].cap;
+      stage.clear(); steps[i].run(stage);
+    }
+    if(scroll){ // scroll the matching instruction into view; ignore observer while scrolling
+      lock = true; cards[i].scrollIntoView({behavior:'smooth', block:'center'});
+      setTimeout(()=> lock=false, 900);
+    }
+  }
+  prev.addEventListener('click', () => go(active-1, true));
+  next.addEventListener('click', () => go(active+1, true));
+  // the step nearest the middle of the viewport becomes active
+  const io = new IntersectionObserver(entries => {
+    if(lock) return;
+    entries.forEach(en => { if(en.isIntersecting) go(cards.indexOf(en.target), false); });
+  }, {rootMargin:'-45% 0px -45% 0px'});
+  cards.forEach(c => io.observe(c));
+  // replay step 1 when the section first comes into view
+  new IntersectionObserver((en, o) => { if(en[0].isIntersecting && active<0){ go(0,false); } }, {threshold:.2}).observe(grid);
+  // keyboard: arrow keys when focus is inside the flow
+  grid.addEventListener('keydown', ev => { if(ev.key==='ArrowRight') go(active+1,true); if(ev.key==='ArrowLeft') go(active-1,true); });
+}
+wireFlow(document.querySelector('[data-flow="use"]'), useStage, USE);
+wireFlow(document.querySelector('[data-flow="refill"]'), refillStage, REFILL);
+
+/* =================================================================
+   6. BOOSTERS — five cartridges, colour drives --boost everywhere
+   ================================================================= */
+const BOOSTERS = [
+  {key:'dry',  name:'Dry / Textured', color:'#EE9A80', for:'For skin that feels tight, flaky or rough. Softens and smooths texture while the SPF base protects.',
+   ing:['Squalane','Panthenol','Low glycolic acid','Centella']},
+  {key:'oily', name:'Oily', color:'#9CC46A', for:'For shine and visible pores. Keeps skin matte and clear without a heavy finish.',
+   ing:['Niacinamide','Zinc','Capryloyl salicylic acid','Light hyaluronic acid']},
+  {key:'monsoon', name:'Monsoon Heat', color:'#7FB0E3', for:'For sticky, humid days. A sweat-resistant SPF concept with a light, calming gel booster.',
+   ing:['Sweat-resistant SPF concept','Centella','Hyaluronic acid gel']},
+  {key:'smog', name:'City Smog', color:'#EDC15A', for:'For polluted city air. An antioxidant booster against dullness from smog and UV.',
+   ing:['Camellia','Vitamin E','Ascorbyl glucoside']},
+  {key:'sensitive', name:'Sensitive', color:'#B8A9E4', for:'For skin that reacts easily. A short, fragrance-free formula that calms redness.',
+   ing:['Fragrance-free concept','Madecassoside','Panthenol']}
+];
+const cartsEl = document.getElementById('carts'), detail = document.getElementById('boostDetail');
+const boost = new Stage(document.getElementById('boostScene'), 'b', {offsetX:110, offsetY:90});
+function miniCart(c){ return `<svg viewBox="0 0 60 150" aria-hidden="true"><rect x="2" y="12" width="56" height="134" rx="18" fill="#F4F1F7" stroke="#C9C1D4"/>
+  <rect x="22" y="2" width="16" height="12" rx="3" fill="#C9C1D4"/><rect x="9" y="22" width="19" height="112" rx="9" fill="#FFFBF2" stroke="#E2D9C9"/>
+  <rect x="32" y="22" width="19" height="112" rx="9" fill="${c}"/><rect x="2" y="128" width="56" height="6" fill="#4FA36A"/></svg>`; }
+BOOSTERS.forEach((b,i) => {
+  const btn = document.createElement('button'); btn.className = 'cart-btn'; btn.setAttribute('aria-pressed','false');
+  btn.innerHTML = miniCart(b.color) + `<span>${b.name}</span>`;
+  btn.addEventListener('click', () => chooseBooster(i));
+  cartsEl.appendChild(btn);
+});
+function chooseBooster(i){
+  const b = BOOSTERS[i];
+  document.documentElement.style.setProperty('--boost', b.color);  // recolours every scene's booster chamber, window and ribbon
+  [...cartsEl.children].forEach((c,k) => c.setAttribute('aria-pressed', k===i));
+  detail.innerHTML = `<div class="fade-swap"><div class="eyebrow">Booster 0${i+1}</div><h3>${b.name}</h3><p>${b.for}</p>
+    <ul class="ing">${b.ing.map(x=>`<li>${x}</li>`).join('')}</ul></div>`;
+  // insertion demo: cartridge enters from below, base returns, green marking appears
+  boost.clear();
+  boost.snap({...DEFAULT, ...OUT, cartY:OUT.cartY+40, cartOpacity:0, green:false, lvl:0, open:false});
+  boost.seq([[80,{cartY:OUT.cartY, cartOpacity:1}], [900,{cartX:0, cartY:BELOW}], [1200,{cartY:0, lvl:1}], [1000,{baseX:0, baseY:0}], [900,{baseTwist:true, green:true, chip:b.name+' cartridge locked'}]]);
+}
+chooseBooster(0);
+
+/* =================================================================
+   7. Page chrome: smooth-scroll buttons, nav highlight, reveals
+   ================================================================= */
+document.querySelectorAll('[data-scroll]').forEach(b => b.addEventListener('click', () => document.querySelector(b.dataset.scroll).scrollIntoView({behavior:'smooth'})));
+const navLinks = [...document.querySelectorAll('.nav ul a')];
+['product','use','refill','boosters'].forEach(id => {
+  new IntersectionObserver(entries => entries.forEach(en => {
+    if(en.isIntersecting) navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href')==='#'+id));
+  }), {rootMargin:'-40% 0px -55% 0px'}).observe(document.getElementById(id));
+});
+const rio = new IntersectionObserver(entries => entries.forEach(en => { if(en.isIntersecting){ en.target.classList.add('in'); rio.unobserve(en.target);} }), {threshold:.12});
+document.querySelectorAll('.reveal').forEach(el => rio.observe(el));
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+/* =================================================================
+   HERO · real-time 3D bottle (Three.js r128)
+   - Procedural model: lathe/cylinder geometry, physical materials,
+     a studio environment map painted on a canvas for reflections.
+   - Drag to rotate (with inertia), idle auto-rotate, cursor parallax.
+   - Scroll through the pinned hero to explode the bottle and reveal
+     the twin cartridge, with HTML labels tracking 3D anchor points.
+   - "Press to dispense" grows two serum ribbons; "Twist" turns the
+     pump head a quarter turn; swatches recolour the booster live.
+   ================================================================= */
+(function(){
+  const canvas = document.getElementById('hero3d');
+  const section = document.getElementById('top');
+  const hasGL = (() => { try { const c = document.createElement('canvas'); return !!(window.WebGLRenderingContext && (c.getContext('webgl') || c.getContext('experimental-webgl'))); } catch(e){ return false; } })();
+  if(!window.THREE || !hasGL){ document.documentElement.classList.add('no-webgl'); wireCopyOnly(); return; }
+  const T = THREE;
+
+  /* ---------- renderer, scene, camera ---------- */
+  const renderer = new T.WebGLRenderer({canvas, antialias:true, alpha:true});
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.outputEncoding = T.sRGBEncoding;
+  renderer.toneMapping = T.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = .95;
+  const scene = new T.Scene();
+  const camera = new T.PerspectiveCamera(28, 1, .1, 100);
+  camera.position.set(0, 0.4, 15);
+
+  /* ---------- studio environment (soft boxes) for metal reflections ---------- */
+  (function env(){
+    const c = document.createElement('canvas'); c.width = 1024; c.height = 512;
+    const g = c.getContext('2d');
+    const bg = g.createLinearGradient(0,0,0,512); bg.addColorStop(0,'#fbf8f3'); bg.addColorStop(.55,'#e9e2d7'); bg.addColorStop(1,'#cfc6b8');
+    g.fillStyle = bg; g.fillRect(0,0,1024,512);
+    g.fillStyle = '#ffffff';
+    g.fillRect(120,90,120,300);   // key softbox
+    g.fillRect(470,40,90,120);    // top light
+    g.fillRect(780,110,70,260);   // rim softbox
+    g.fillStyle = 'rgba(255,240,215,.9)'; g.fillRect(320,150,40,220); // warm strip
+    const tex = new T.CanvasTexture(c); tex.mapping = T.EquirectangularReflectionMapping; tex.encoding = T.sRGBEncoding;
+    const pm = new T.PMREMGenerator(renderer); scene.environment = pm.fromEquirectangular(tex).texture; pm.dispose();
+  })();
+  scene.add(new T.HemisphereLight(0xffffff, 0xd8cfc2, .55));
+  const key = new T.DirectionalLight(0xffffff, 1.1); key.position.set(-4, 6, 6); scene.add(key);
+  const rim = new T.DirectionalLight(0xe9dcff, .8); rim.position.set(5, 3, -4); scene.add(rim);
+
+  /* ---------- materials ---------- */
+  const M = {
+    violet: new T.MeshPhysicalMaterial({color:0x34205f, metalness:.45, roughness:.28, clearcoat:1, clearcoatRoughness:.12, envMapIntensity:.55}),
+    black:  new T.MeshPhysicalMaterial({color:0x0e0d12, metalness:.15, roughness:.42, clearcoat:.7, clearcoatRoughness:.3, envMapIntensity:.35}),
+    ridge:  new T.MeshStandardMaterial({color:0x2a2830, metalness:.2, roughness:.5, envMapIntensity:.4}),
+    gold:   new T.MeshPhysicalMaterial({color:0xc9ad78, metalness:1, roughness:.25, clearcoat:.5, envMapIntensity:.8}),
+    frost:  new T.MeshPhysicalMaterial({color:0xe9e4f2, metalness:0, roughness:.3, transparent:true, opacity:.34, clearcoat:.6, depthWrite:false}),
+    spf:    new T.MeshStandardMaterial({color:0xfbf5ea, roughness:.55}),
+    boost:  new T.MeshStandardMaterial({color:0xee9a80, roughness:.5}),
+    green:  new T.MeshStandardMaterial({color:0x57c27a, emissive:0x2a7a45, emissiveIntensity:.35, roughness:.4}),
+    glass:  new T.MeshPhysicalMaterial({color:0xffffff, metalness:0, roughness:.05, transparent:true, opacity:.22, clearcoat:1}),
+    dark:   new T.MeshStandardMaterial({color:0x221a3a, roughness:.6})
+  };
+
+  // hex colours are authored in sRGB; convert to linear so the sRGB output shows them true
+  Object.values(M).forEach(m => { m.color && m.color.convertSRGBToLinear(); m.emissive && m.emissive.convertSRGBToLinear(); });
+
+  /* rounded cylinder via a lathe profile */
+  function roundedCyl(r, h, rad, seg=96){
+    const pts = [], hh = h/2;
+    pts.push(new T.Vector2(0, -hh));
+    for(let i=0;i<=8;i++){ const a = -Math.PI/2 + (i/8)*(Math.PI/2); pts.push(new T.Vector2(r - rad + Math.cos(a)*rad, -hh + rad + Math.sin(a)*rad)); }
+    for(let i=0;i<=8;i++){ const a = (i/8)*(Math.PI/2); pts.push(new T.Vector2(r - rad + Math.cos(a)*rad, hh - rad + Math.sin(a)*rad)); }
+    pts.push(new T.Vector2(0, hh));
+    return new T.LatheGeometry(pts, seg);
+  }
+  function ridges(r, h, n, mat){
+    const g = new T.Group(), geo = new T.BoxGeometry(.028, h, .03);
+    for(let i=0;i<n;i++){ const a = i/n*Math.PI*2, m = new T.Mesh(geo, mat); m.position.set(Math.sin(a)*r, 0, Math.cos(a)*r); m.rotation.y = a; g.add(m); }
+    return g;
+  }
+
+  /* ---------- the bottle ---------- */
+  const R = .66;                      // sleeve radius
+  const bottle = new T.Group(); scene.add(bottle);
+  const spin = bottle;   // parts sit directly in the bottle; each part spins on its own axis so explode offsets stay screen-aligned
+
+  // sleeve
+  const sleeve = new T.Group(); spin.add(sleeve);
+  sleeve.add(new T.Mesh(roundedCyl(R, 4.1, .26), M.violet));
+  // darker bands that hide the cartridge fittings
+  [-1.86, 1.86].forEach(y => { const b = new T.Mesh(new T.CylinderGeometry(R+.004, R+.004, .3, 96, 1, true), M.dark); b.position.y = y; b.material = M.dark.clone(); b.material.transparent = true; b.material.opacity = .55; sleeve.add(b); });
+  // printed wordmarks: canvas texture wrapped on a thin cylinder (front = canvas centre)
+  (function label(){
+    const c = document.createElement('canvas'); c.width = 2048; c.height = 1024; const g = c.getContext('2d');
+    g.clearRect(0,0,2048,1024); g.fillStyle = 'rgba(240,233,255,.88)'; g.textAlign = 'center';
+    g.font = '600 40px Inter, Helvetica, Arial'; g.fillText('U V   D E F E N D E R', 1024, 120);
+    g.save(); g.translate(1024-150, 520); g.rotate(-Math.PI/2); g.font = 'italic 84px "Cormorant Garamond", Georgia, serif'; g.fillText('Twin Serum Protector', 0, 0); g.restore();
+    g.save(); g.translate(1024+150, 520); g.rotate(-Math.PI/2); g.font = '500 40px Inter, Helvetica, Arial'; g.fillText('SPF 50+  PA++++', 0, 0); g.restore();
+    const tex = new T.CanvasTexture(c); tex.encoding = T.sRGBEncoding; tex.anisotropy = 8;
+    const m = new T.Mesh(new T.CylinderGeometry(R+.006, R+.006, 4.0, 128, 1, true, -Math.PI, Math.PI*2), new T.MeshBasicMaterial({map:tex, transparent:true, depthWrite:false}));
+    sleeve.add(m);
+  })();
+  // level window: gold rim, dark well, two serum bars, glass
+  const win = new T.Group(); win.position.set(0, 0.05, R); sleeve.add(win);
+  { const rim = new T.Mesh(new T.BoxGeometry(.24, 3.0, .03), M.gold); rim.position.z = -.005; win.add(rim); }
+  win.add(new T.Mesh(new T.BoxGeometry(.19, 2.94, .035), new T.MeshStandardMaterial({color:0xece6f6, roughness:.4})));
+  const barSpf = new T.Mesh(new T.BoxGeometry(.075, 2.9, .04), M.spf); barSpf.position.set(-.045, 0, .006); win.add(barSpf);
+  const barBoost = new T.Mesh(new T.BoxGeometry(.075, 2.9, .04), M.boost); barBoost.position.set(.045, 0, .006); win.add(barBoost);
+  { const gl = new T.Mesh(new T.BoxGeometry(.19, 2.94, .012), M.glass); gl.position.z = .03; win.add(gl); }
+  // green marking slot (lock indicator)
+  const slot = new T.Mesh(new T.BoxGeometry(.16, .07, .03), M.green);
+  slot.position.set(Math.sin(.5)*(R+.005), -1.86, Math.cos(.5)*(R+.005)); slot.rotation.y = .5; sleeve.add(slot);
+
+  // collar
+  const collar = new T.Mesh(new T.CylinderGeometry(R-.04, R-.04, .17, 96), M.gold); collar.position.y = 2.14; spin.add(collar);
+
+  // pump head (rotates a quarter turn to lock) + twin-outlet nozzle
+  const pump = new T.Group(); pump.position.y = 2.56; spin.add(pump);
+  pump.add(new T.Mesh(roundedCyl(.6, .62, .16), M.black));
+  const pr = ridges(.6, .42, 56, M.ridge); pump.add(pr);
+  const dot = new T.Mesh(new T.SphereGeometry(.035, 16, 16), M.green); dot.position.set(0, .31, .38); pump.add(dot);
+  const nozzle = new T.Group(); nozzle.position.set(.55, .04, 0); pump.add(nozzle);
+  const nz = new T.Mesh(new T.BoxGeometry(.62, .24, .3), M.black); nz.position.x = .26; nozzle.add(nz);
+  const nzTip = new T.Mesh(new T.CylinderGeometry(.15, .15, .24, 32), M.black); nzTip.rotation.x = Math.PI/2; nzTip.position.set(.57, 0, 0); nzTip.scale.set(1,1,1.25); nozzle.add(nzTip);
+  const outA = new T.Mesh(new T.SphereGeometry(.045, 20, 20), M.spf);   outA.position.set(.7, 0, -.065); nozzle.add(outA);
+  const outB = new T.Mesh(new T.SphereGeometry(.045, 20, 20), M.boost); outB.position.set(.7, 0, .065);  nozzle.add(outB);
+
+  // base (twist-lock)
+  const base = new T.Group(); base.position.y = -2.3; spin.add(base);
+  base.add(new T.Mesh(roundedCyl(.62, .42, .12), M.black));
+  base.add(ridges(.62, .26, 56, M.ridge));
+
+  // twin cartridge (hidden inside the sleeve until exploded)
+  const cart = new T.Group(); spin.add(cart);
+  cart.add(new T.Mesh(roundedCyl(.52, 3.8, .2), M.frost));
+  const chA = new T.Mesh(roundedCyl(.2, 3.4, .1, 48), M.spf);   chA.position.set(-.22, 0, 0); cart.add(chA);
+  const chB = new T.Mesh(roundedCyl(.2, 3.4, .1, 48), M.boost); chB.position.set(.22, 0, 0);  cart.add(chB);
+  const tab = new T.Mesh(new T.BoxGeometry(.22, .22, .16), M.frost); tab.position.y = 2.0; cart.add(tab);
+  const band = new T.Mesh(new T.CylinderGeometry(.525, .525, .1, 64, 1, true), M.green); band.position.y = -1.6; cart.add(band);
+
+  // soft contact shadow
+  const sh = (function(){ const c = document.createElement('canvas'); c.width = c.height = 256; const g = c.getContext('2d');
+    const rg = g.createRadialGradient(128,128,0,128,128,128); rg.addColorStop(0,'rgba(40,28,64,.38)'); rg.addColorStop(1,'rgba(40,28,64,0)');
+    g.fillStyle = rg; g.fillRect(0,0,256,256);
+    const m = new T.Mesh(new T.PlaneGeometry(3.4, 1.2), new T.MeshBasicMaterial({map:new T.CanvasTexture(c), transparent:true, depthWrite:false}));
+    m.rotation.x = -Math.PI/2; m.position.y = -2.62; bottle.add(m); return m; })();
+
+  /* ---------- serum ribbons (grow with drawRange) ---------- */
+  function ribbon(mat, dz){
+    const curve = new T.CatmullRomCurve3([
+      new T.Vector3(.72, 0, dz), new T.Vector3(1.25, -.05, dz*1.2), new T.Vector3(1.6, -.6, dz*1.5), new T.Vector3(1.7, -1.4, dz*1.6), new T.Vector3(1.62, -2.1, dz*1.6)
+    ]);
+    const geo = new T.TubeGeometry(curve, 120, .055, 14, false);
+    const m = new T.Mesh(geo, mat.clone()); m.material.transparent = true;
+    m.userData.total = geo.index.count; geo.setDrawRange(0, 0); nozzle.add(m); return m;
+  }
+  const ribA = ribbon(M.spf, -.065), ribB = ribbon(M.boost, .065);
+
+  /* ---------- state + interaction ---------- */
+  const st = { rotY:-.5, velY:0, dragging:false, lastX:0, mx:0, my:0, explode:0, explodeT:0, twist:0, twistT:0, press:0, rib:-1, ribFade:1, idle:0 };
+  let locked = false;
+
+  canvas.addEventListener('pointerdown', e => { st.dragging = true; st.lastX = e.clientX; st.idle = 0; canvas.setPointerCapture(e.pointerId); });
+  canvas.addEventListener('pointermove', e => {
+    const r = canvas.getBoundingClientRect(); st.mx = (e.clientX - r.left)/r.width - .5; st.my = (e.clientY - r.top)/r.height - .5;
+    if(st.dragging){ const dx = e.clientX - st.lastX; st.lastX = e.clientX; st.velY = dx * .006; st.rotY += st.velY; }
+  });
+  const end = () => { st.dragging = false; };
+  canvas.addEventListener('pointerup', end); canvas.addEventListener('pointercancel', end);
+
+  const pressBtn = document.getElementById('pressBtn'), twistBtn = document.getElementById('twistBtn');
+  pressBtn.addEventListener('click', () => {
+    if(locked){ twistBtn.classList.remove('nudge'); void twistBtn.offsetWidth; twistBtn.classList.add('nudge'); pressBtn.textContent = 'Unlock first'; setTimeout(()=>pressBtn.textContent='Press to dispense', 1400); return; }
+    st.press = 1; st.rib = 0; st.ribFade = 1; st.idle = 0;
+    st.rotYTarget = -1.1;                                    // turn the bottle so the ribbons read clearly
+  });
+  twistBtn.addEventListener('click', () => {
+    locked = !locked; st.twistT = locked ? 1 : 0;
+    twistBtn.textContent = locked ? 'Twist to unlock' : 'Twist to lock';
+    if(locked){ st.rib = -1; }
+  });
+
+  // booster swatches: recolour the 3D booster + keep the page's booster section in sync
+  const COLORS = ['#EE9A80','#9CC46A','#7FB0E3','#EDC15A','#B8A9E4'], NAMES = ['Dry / Textured','Oily','Monsoon Heat','City Smog','Sensitive'];
+  const sws = [...document.querySelectorAll('.sw')], swName = document.getElementById('swName');
+  const boostMats = () => [M.boost, ribB.material];
+  let colorTarget = new T.Color(COLORS[0]).convertSRGBToLinear();
+  function pickSwatch(i, fromPage){
+    sws.forEach((b,k) => b.setAttribute('aria-pressed', k===i));
+    swName.textContent = NAMES[i]; colorTarget = new T.Color(COLORS[i]).convertSRGBToLinear();
+    if(!fromPage && typeof chooseBooster === 'function') chooseBooster(i);
+  }
+  sws.forEach((b,i) => b.addEventListener('click', () => pickSwatch(i)));
+  pickSwatch(0, true);
+  // reflect choices made in the Boosters section back into the hero
+  document.querySelectorAll('.cart-btn').forEach((b,i) => b.addEventListener('click', () => pickSwatch(i, true)));
+
+  /* ---------- scroll: pinned progress drives the explode ---------- */
+  const copy = document.querySelector('.hero-copy'), bar = document.getElementById('heroBar');
+  function scrollProgress(){
+    const total = section.offsetHeight - innerHeight;
+    return Math.min(1, Math.max(0, (scrollY - section.offsetTop) / total));
+  }
+
+  /* ---------- labels follow projected 3D anchors ---------- */
+  const labels = {}; document.querySelectorAll('.hl').forEach(el => labels[el.dataset.k] = el);
+  const v = new T.Vector3();
+  function placeLabel(k, obj, local, side){
+    v.copy(local); obj.localToWorld(v); v.project(camera);
+    const r = canvas.getBoundingClientRect(), x = (v.x*.5+.5)*r.width, y = (-v.y*.5+.5)*r.height;
+    const el = labels[k]; el.classList.toggle('left', side==='left');
+    el.style.transform = side==='left' ? `translate(${x - el.offsetWidth + 5}px, ${y-9}px)` : `translate(${x-5}px, ${y-9}px)`;
+  }
+
+  /* ---------- layout ---------- */
+  let narrow = false;
+  function resize(){
+    const w = canvas.clientWidth, h = canvas.clientHeight; renderer.setSize(w, h, false);
+    camera.aspect = w/h; camera.updateProjectionMatrix(); narrow = w < 900;
+  }
+  addEventListener('resize', resize); resize();
+
+  const ease = (a,b,k) => a + (b-a)*k;
+  const seg = (p,a,b) => Math.min(1, Math.max(0, (p-a)/(b-a)));
+  const smooth = t => t*t*(3-2*t);
+
+  /* ---------- frame loop ---------- */
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let visible = true;
+  new IntersectionObserver(e => visible = e[0].isIntersecting).observe(section);
+  const clock = new T.Clock();
+  function frame(){
+    requestAnimationFrame(frame);
+    if(!visible) return;
+    const dt = Math.min(clock.getDelta(), .05), t = clock.elapsedTime;
+
+    // scroll explode (damped)
+    const p = scrollProgress(); bar.style.width = (p*100)+'%';
+    st.explodeT = smooth(seg(p, .12, .78));
+    st.explode = ease(st.explode, st.explodeT, .08);
+    const e = st.explode;
+    copy.classList.toggle('inside', p > .38);
+
+    // rotation: drag + inertia + idle drift; ease toward a target after "press"
+    if(!st.dragging){
+      st.velY *= .94; st.rotY += st.velY;
+      st.idle += dt;
+      if(st.rotYTarget !== undefined){ st.rotY = ease(st.rotY, st.rotYTarget, .06); if(Math.abs(st.rotY-st.rotYTarget) < .01) st.rotYTarget = undefined; }
+      else if(st.idle > 2.5 && !reduce && st.rib < 0) st.rotY += dt * .25 * (1 - e*.8);
+    }
+    [sleeve, collar, base, cart].forEach(o => o.rotation.y = st.rotY);
+    bottle.rotation.x = ease(bottle.rotation.x, -st.my*.12 + .04, .05);
+    bottle.rotation.z = ease(bottle.rotation.z, st.mx*.05, .05);
+
+    // layout: bottle sits right of the copy on desktop, above it on mobile
+    const bx = narrow ? 0 : 2.15 - e*.45, by = narrow ? 2.1 - e*.25 : -.2 + Math.sin(t*.9)*.06*(1-e);
+    bottle.position.x = ease(bottle.position.x, bx, .08); bottle.position.y = ease(bottle.position.y, by, .08);
+    const sc = narrow ? .29 - e*.02 : .88 - e*.16; bottle.scale.setScalar(ease(bottle.scale.x, sc, .08));
+    camera.position.z = 15;
+
+    // exploded positions
+    pump.position.y   = 2.56 + e*1.0;
+    collar.position.y = 2.14 + e*.55;
+    sleeve.position.x = -e*.75;
+    const be = smooth(seg(e, 0, .5)), ce = smooth(seg(e, .25, 1));
+    base.position.set(-e*.75, -2.3 - be*1.0, 0);
+    // cartridge: slides straight down out of the sleeve, then steps to the right
+    cart.position.set(-e*.75 + smooth(seg(ce,.45,1))*1.75, -smooth(seg(ce,0,.55))*4.2 + smooth(seg(ce,.45,1))*3.9, 0);
+    cart.visible = e > .02;
+    sh.scale.x = 1 + e*.8;
+
+    // pump twist (quarter turn) and press
+    st.twist = ease(st.twist, st.twistT, .1);
+    pump.rotation.y = st.rotY - st.twist * Math.PI/2;
+    dot.material = st.twist > .5 ? M.ridge : M.green;
+    st.press = Math.max(0, st.press - dt*3.2);
+    pump.position.y -= Math.sin(st.press*Math.PI) * .12;
+
+    // ribbons grow, hold, then fade
+    if(st.rib >= 0){
+      st.rib += dt;
+      const g = smooth(Math.min(1, st.rib/1.4));
+      [ribA, ribB].forEach(r => { r.geometry.setDrawRange(0, Math.floor(r.userData.total*g/6)*6); });
+      st.ribFade = st.rib > 3.2 ? Math.max(0, 1 - (st.rib-3.2)/.8) : 1;
+      if(st.rib > 4.1){ st.rib = -1; }
+    } else { [ribA, ribB].forEach(r => r.geometry.setDrawRange(0,0)); }
+    ribA.material.opacity = ribB.material.opacity = st.ribFade;
+
+    // booster colour cross-fade
+    M.boost.color.lerp(colorTarget, .08); ribB.material.color.copy(M.boost.color);
+
+    // labels appear once the bottle has opened up
+    const show = e > .72;
+    Object.values(labels).forEach(l => l.classList.toggle('on', show));
+    if(show || e > .5){
+      placeLabel('pump', pump, new T.Vector3(-.62, .1, 0), 'left');
+      placeLabel('window', win, new T.Vector3(-.12, .9, .02), 'left');
+      placeLabel('sleeve', sleeve, new T.Vector3(-R, -.9, 0), 'left');
+      placeLabel('cart', cart, new T.Vector3(.54, .6, 0), 'right');
+      placeLabel('base', base, new T.Vector3(-.64, 0, 0), 'left');
+    }
+    renderer.render(scene, camera);
+  }
+  frame();
+
+  /* copy phase toggle also works in the no-WebGL fallback */
+  function wireCopyOnly(){
+    const copy = document.querySelector('.hero-copy');
+    addEventListener('scroll', () => { const p = (scrollY - section.offsetTop)/(section.offsetHeight - innerHeight); copy.classList.toggle('inside', p > .38); }, {passive:true});
+  }
+})();
+</script>
+</body>
+</html>
